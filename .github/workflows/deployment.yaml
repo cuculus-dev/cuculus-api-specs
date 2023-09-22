@@ -29,7 +29,12 @@ jobs:
       - name: Build
         run: redocly build-docs cuculus-openapi.yaml
 
+      - name: Move to build/index.html
+        run: mkdir ./build
+
+      - run: mv ./redoc-static.html ./build/index.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ./redoc-static.html
+          path: ./build
