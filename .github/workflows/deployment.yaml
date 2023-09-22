@@ -27,7 +27,7 @@ jobs:
         run: npm install @redocly/cli@1.2.0 -g
 
       - name: Build
-        run: redocly build-docs cuculus-openapi.yaml
+        run: redocly build-docs ./docs/cuculus-openapi.yaml
 
       - name: Move to build/index.html
         run: mkdir ./build
