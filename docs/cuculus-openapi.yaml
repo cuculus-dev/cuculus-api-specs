@@ -1142,7 +1142,6 @@ components:
       required:
         - code
         - issued_at
-        - used_at
     UserInvitations:
       type: object
       properties:
