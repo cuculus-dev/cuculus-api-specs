@@ -901,7 +901,7 @@ paths:
   /v0/accounts/update-profile-background-image:
     post:
       operationId: updateProfileBackgroundImage
-      summary: ヘッダー画像更新
+      summary: ヘッダー画像更新(未実装)
       parameters: []
       requestBody:
         required: true
