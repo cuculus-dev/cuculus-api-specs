@@ -197,7 +197,13 @@ paths:
             type: number
       responses:
         '201':
-          description: ''
+          description: ユーザーとの関係性
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Relationship'
+        '401':
+          description: JWTが無効、または期限切れ
         '404':
           description: ユーザーが見つかりませんでした。
       tags:
@@ -380,22 +386,24 @@ paths:
                         status: up
                     additionalProperties:
                       type: object
+                      required:
+                        - status
                       properties:
                         status:
                           type: string
-                      additionalProperties:
-                        type: string
+                      additionalProperties: true
                     nullable: true
                   error:
                     type: object
                     example: {}
                     additionalProperties:
                       type: object
+                      required:
+                        - status
                       properties:
                         status:
                           type: string
-                      additionalProperties:
-                        type: string
+                      additionalProperties: true
                     nullable: true
                   details:
                     type: object
@@ -404,11 +412,12 @@ paths:
                         status: up
                     additionalProperties:
                       type: object
+                      required:
+                        - status
                       properties:
                         status:
                           type: string
-                      additionalProperties:
-                        type: string
+                      additionalProperties: true
         '503':
           description: The Health Check is not successful
           content:
@@ -426,11 +435,12 @@ paths:
                         status: up
                     additionalProperties:
                       type: object
+                      required:
+                        - status
                       properties:
                         status:
                           type: string
-                      additionalProperties:
-                        type: string
+                      additionalProperties: true
                     nullable: true
                   error:
                     type: object
@@ -440,11 +450,12 @@ paths:
                         message: Could not connect
                     additionalProperties:
                       type: object
+                      required:
+                        - status
                       properties:
                         status:
                           type: string
-                      additionalProperties:
-                        type: string
+                      additionalProperties: true
                     nullable: true
                   details:
                     type: object
@@ -456,11 +467,12 @@ paths:
                         message: Could not connect
                     additionalProperties:
                       type: object
+                      required:
+                        - status
                       properties:
                         status:
                           type: string
-                      additionalProperties:
-                        type: string
+                      additionalProperties: true
   /v0/posts:
     post:
       operationId: createPost
@@ -640,30 +652,6 @@ paths:
             type: string
       responses:
         '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserPost'
-        '401':
-          description: ''
-        '404':
-          description: ''
-      tags:
-        - posts
-      security:
-        - bearer: []
-    delete:
-      operationId: deleteRepost
-      summary: リポスト解除
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
           description: ''
           content:
             application/json:
@@ -923,6 +911,155 @@ paths:
         - accounts
       security:
         - bearer: []
+  /.well-known/host-meta:
+    get:
+      operationId: WellKnownController_getHostMeta
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - activity-pub
+  /.well-known/host-meta.json:
+    get:
+      operationId: WellKnownController_getHostMetaJson
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - activity-pub
+  /.well-known/nodeinfo:
+    get:
+      operationId: WellKnownController_getNodeInfo
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - activity-pub
+  /.well-known/webfinger:
+    get:
+      operationId: WellKnownController_getWebFinger
+      parameters:
+        - name: resource
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - activity-pub
+  /nodeinfo/2.0:
+    get:
+      operationId: NodeinfoController_getNodeInfo2_0
+      parameters: []
+      responses:
+        '200':
+          description: nodeinfo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NodeInfo'
+      tags:
+        - activity-pub
+  /nodeinfo/2.1:
+    get:
+      operationId: NodeinfoController_getNodeInfo2_1
+      parameters: []
+      responses:
+        '200':
+          description: nodeinfo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NodeInfo'
+      tags:
+        - activity-pub
+  /users/{id}:
+    get:
+      operationId: getUserActivity
+      summary: ActivityPub向けのユーザー情報(実装中)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ユーザー情報
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonActor'
+        '302':
+          description: acceptヘッダがjsonではない場合リダイレクト
+        '404':
+          description: ユーザーが見つかりませんでした。
+      tags:
+        - activity-pub
+  /users/{id}/inbox:
+    post:
+      operationId: postUserInbox
+      summary: ActivityPub向け(実装中)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '404':
+          description: ユーザーが見つかりませんでした。
+      tags:
+        - activity-pub
+  /users/{id}/outbox:
+    get:
+      operationId: getUserOutbox
+      summary: ActivityPub向け(実装中)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '404':
+          description: ユーザーが見つかりませんでした。
+      tags:
+        - activity-pub
+  /users/{id}/collections/featured:
+    get:
+      operationId: getUserFeatured
+      summary: ActivityPub向け(実装中)
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '404':
+          description: ユーザーが見つかりませんでした。
+      tags:
+        - activity-pub
+  /inbox:
+    post:
+      operationId: postInbox
+      summary: 共通のInbox
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - activity-pub
 info:
   title: Cuculus API
   description: The Cuculus API description
@@ -1043,14 +1180,22 @@ components:
           $ref: '#/components/schemas/User'
         text:
           type: string
-          description: 本文|空orNullの場合はRTです。
+          description: 本文|リポストの場合はUndefinedになります。
         posted_at:
           format: date-time
           type: string
+        repost_count:
+          type: number
+          description: リポスト数
+        favorite_count:
+          type: number
+          description: お気に入り数
       required:
         - id
         - author
         - posted_at
+        - repost_count
+        - favorite_count
     UserPost:
       type: object
       properties:
@@ -1069,10 +1214,16 @@ components:
           $ref: '#/components/schemas/User'
         text:
           type: string
-          description: 本文|空orNullの場合はRTです。
+          description: 本文|リポストの場合はUndefinedになります。
         posted_at:
           format: date-time
           type: string
+        repost_count:
+          type: number
+          description: リポスト数
+        favorite_count:
+          type: number
+          description: お気に入り数
         original_post:
           description: リポスト元
           allOf:
@@ -1080,23 +1231,27 @@ components:
         reposted:
           type: boolean
           description: リポスト済み
-        repost_count:
-          type: number
-          description: リポスト数
         favorited:
           type: boolean
           description: お気に入り登録済み
-        favorite_count:
-          type: number
-          description: お気に入り数
       required:
         - id
         - author
         - posted_at
-        - reposted
         - repost_count
-        - favorited
         - favorite_count
+        - reposted
+        - favorited
+    Relationship:
+      type: object
+      properties:
+        id:
+          type: number
+        following:
+          type: boolean
+      required:
+        - id
+        - following
     PreUserRequest:
       type: object
       properties:
@@ -1255,3 +1410,87 @@ components:
           type: string
           description: bio
           example: ククルスへようこそ。
+    NodeInfo:
+      type: object
+      properties:
+        version:
+          type: string
+        software:
+          type: object
+        protocols:
+          type: array
+          items:
+            type: string
+        services:
+          type: object
+        openRegistrations:
+          type: boolean
+        usage:
+          type: object
+        metadata:
+          type: object
+      required:
+        - version
+        - software
+        - protocols
+        - services
+        - openRegistrations
+        - usage
+        - metadata
+    PersonActor:
+      type: object
+      properties:
+        '@context':
+          type: array
+          items:
+            type: string
+        id:
+          type: string
+        type:
+          type: string
+        inbox:
+          type: string
+        outbox:
+          type: string
+        following:
+          type: string
+        followers:
+          type: string
+        featured:
+          type: string
+        sharedInbox:
+          type: string
+        endpoints:
+          type: object
+        preferredUsername:
+          type: string
+        name:
+          type: string
+        summary:
+          type: object
+        url:
+          type: string
+        publicKey:
+          type: object
+        icon:
+          type: object
+        discoverable:
+          type: boolean
+      required:
+        - '@context'
+        - id
+        - type
+        - inbox
+        - outbox
+        - following
+        - followers
+        - featured
+        - sharedInbox
+        - endpoints
+        - preferredUsername
+        - name
+        - summary
+        - url
+        - publicKey
+        - icon
+        - discoverable
